@@ -56,6 +56,13 @@ void write_text_file(const fs::path& output_dir, int width,
   padded_fname << std::setw(width) << std::setfill('0') << num << ".dat";
   fs::ofstream ofs{output_dir / padded_fname.str()};
 
+  // Add by KJW
+  // Set Ncoll density output file
+  std::ostringstream ncoll_density_fname{};
+  ncoll_density_fname << std::setw(width) << std::setfill('0') << num << ".ncoll";
+  fs::ofstream ncoll_fs{ output_dir / ncoll_density_fname.str() };
+  //
+
   if (header) {
     // Write a commented header of event properties as key = value pairs.
     ofs << std::setprecision(10)
@@ -69,6 +76,21 @@ void write_text_file(const fs::path& output_dir, int width,
 
     for (const auto& psi : event.participant_plane())
       ofs << "# psi" << psi.first << "    = " << psi.second << '\n';
+    
+    // Add by KJW
+    ofs << "# ixcm=" << event.mass_center_index().first;
+    ofs << "  iycm=" << event.mass_center_index().second << '\n';
+    ncoll_fs << std::setprecision(10)
+             << "# event "         << num                << '\n'
+             << "# ncoll      = "  << event.ncoll()      << '\n'
+             << "# xy_max     = "  << event.get_XYMAX()  << '\n'
+             << "# xy_step    = "  << event.dxy()        << '\n'
+             << "# n_xy_step  = "  << event.getNStep()   << '\n'
+             << "# eta_max    = "  << event.get_EtaMax() << '\n'
+             << "# eta_step   = "  << event.deta()       << '\n'
+             << "# n_eta_step = "  << event.getNEta()    << '\n';
+             
+    //
   }
 
   // Write IC profile as a block grid.  Use C++ default float format (not
@@ -89,6 +111,15 @@ void write_text_file(const fs::path& output_dir, int width,
     }
 	if (!is3d) ofs << std::endl;
   }
+  
+  // Add by KJW
+  for (const auto & row : event.TAB_grid() ) {
+    for (const auto & item : row) {
+      ncoll_fs << item << " ";
+    }
+    ncoll_fs << '\n';
+  }
+  //
 }
 
 #ifdef TRENTO_HDF5

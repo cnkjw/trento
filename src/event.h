@@ -122,6 +122,13 @@ class Event {
   const std::pair<double, double> mass_center_index() const
 { return std::make_pair(ixcm_, iycm_); }
 
+  // Add by KJW
+  inline double get_XYMAX() const {return xymax_;}
+  inline double get_EtaMax() const {return etamax_;}
+  inline int getNStep() const {return nsteps_;}
+  inline int getNEta() const {return neta_;}
+  //
+
  private:
   /// Compute a nuclear thickness function (TA or TB) onto a grid for a given
   /// nucleus and nucleon profile.  This destroys any data previously contained
